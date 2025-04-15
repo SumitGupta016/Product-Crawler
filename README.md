@@ -1,133 +1,116 @@
-Product Crawler
-A scalable, domain-aware product crawler built with NestJS, Puppeteer, and Cheerio. It extracts product links from supported e-commerce websites, handling dynamic content and infinite scrolling effectively.​
+# 🕷️ Product Crawler
 
-🧭 Supported Domains
-Virgio
+A robust NestJS-based web crawler that extracts product links from e-commerce sites using **Puppeteer** and **Cheerio**. Handles dynamic pages, infinite scroll, and domain-specific patterns.
 
-TataCliq
+---
 
-Nykaa Fashion
+## 🌐 Supported Domains
 
-Westside
+- Virgio
+- TataCliq
+- Nykaa Fashion
+- Westside
 
-⚙️ Features
-Domain-Specific Configurations: Each domain has tailored configurations, including base URLs, product URL patterns, and optional page handling functions.
+---
 
-Dynamic Content Handling: Utilizes Puppeteer to handle JavaScript-rendered content and infinite scrolling.
+## ⚙️ Features
 
-Fallback Mechanism: If Puppeteer fails to extract links, falls back to Cheerio for static HTML parsing.
+- **Domain-Specific Configurations**: Base URLs, product URL patterns, optional custom Puppeteer functions.
+- **Dynamic Content Handling**: Uses Puppeteer to render and scroll dynamic product listings.
+- **Fallback Mechanism**: If Puppeteer fails, uses Cheerio to parse static HTML.
+- **Modular Architecture**: Built with NestJS for maintainability and scalability.
 
-Modular Architecture: Built with NestJS for a clean and maintainable codebase.​
+---
 
-🛠️ Installation
-Clone the repository:
+## 📦 Tech Stack
 
-bash
-Copy
-Edit
-git clone https://github.com/SumitGupta016/Product-Crawler.git
-cd Product-Crawler
-Install dependencies:
+| Tech         | Purpose                                     |
+|--------------|---------------------------------------------|
+| **NestJS**   | Backend architecture                        |
+| **Puppeteer**| Headless browser for JavaScript rendering   |
+| **Cheerio**  | Fast static HTML scraping                   |
+| **TypeScript**| Modern type-safe code                      |
 
-bash
-Copy
-Edit
-npm install
-🚀 Running the Application
-Development mode:
+---
 
-bash
-Copy
-Edit
-npm run start:dev
-Production mode:
+## 📁 Folder Structure
 
-bash
-Copy
-Edit
-npm run start:prod
-🧪 Testing
-Run tests:
-
-bash
-Copy
-Edit
-npm run test
-📁 Project Structure
-bash
-Copy
-Edit
+```
 src/
 ├── crawler/
-│ ├── crawler.service.ts # Core crawling logic
-│ ├── domains/
-│ │ └── crawler.domain.ts # Domain configurations
-│ └── utils/
-│ └── autoScroll.ts # Utility for auto-scrolling pages
-├── app.module.ts # Root module
-├── main.ts # Entry point
-📦 Dependencies
-@nestjs/common: Provides NestJS decorators and utilities.
+│   ├── crawler.service.ts       # Core crawling logic
+│   ├── crawler.domain.ts        # Domain configurations
+│   └── utils/
+│       └── autoScroll.ts        # Infinite scroll helper
+└── main.ts                      # App entrypoint
+```
 
-cheerio: Fast, flexible, and lean implementation of core jQuery designed specifically for the server. Used for static HTML parsing.
+---
 
-puppeteer: Headless Chrome Node.js API. Used for rendering dynamic content and handling JavaScript-heavy pages.​
+## 🚀 Getting Started
 
-🧩 Domain Configuration
-Each domain is configured with a DomainConfig interface:​
+### 1. Clone the repo
+```bash
+git clone https://github.com/SumitGupta016/Product-Crawler.git
+cd Product-Crawler
+```
 
-typescript
-Copy
-Edit
-export interface DomainConfig {
-baseUrl: string;
-productUrlPattern: RegExp;
-handlePage?: (page: puppeteer.Page) => Promise<void>;
-}
-This allows for domain-specific handling, such as waiting for certain selectors or performing auto-scrolling.​
+### 2. Install dependencies
+```bash
+npm install
+```
 
-🔧 AutoScroll Utility
-The autoScroll function is used to simulate user scrolling on pages that load content dynamically as the user scrolls down. It's located in src/crawler/utils/autoScroll.ts.​
+### 3. Run in development
+```bash
+npm run start:dev
+```
 
-typescript
-Copy
-Edit
-import puppeteer from 'puppeteer';
+### 4. Run in production
+```bash
+npm run start:prod
+```
 
-export const autoScroll = async (page: puppeteer.Page): Promise<void> => {
-await page.evaluate(async () => {
-await new Promise<void>((resolve) => {
-let totalHeight = 0;
-const distance = 500;
-const timer = setInterval(() => {
-const scrollHeight = document.body.scrollHeight;
-window.scrollBy(0, distance);
-totalHeight += distance;
+---
 
-        if (totalHeight >= scrollHeight) {
+## 🧪 Example Usage
+
+```ts
+const links = await crawlerService.crawl('https://www.virgio.com/men/all');
+console.log(links); // Array of product URLs
+```
+
+---
+
+## 🔁 Auto Scroll Logic
+
+```ts
+export async function autoScroll(page: puppeteer.Page): Promise<void> {
+  await page.evaluate(async () => {
+    await new Promise<void>((resolve) => {
+      let totalHeight = 0;
+      const distance = 500;
+      const timer = setInterval(() => {
+        window.scrollBy(0, distance);
+        totalHeight += distance;
+
+        if (totalHeight >= document.body.scrollHeight) {
           clearInterval(timer);
           resolve();
         }
       }, 300);
     });
+  });
+}
+```
 
-});
-};
-🧠 Application Flow
-Input URL: The user provides a URL to crawl.
+---
 
-Domain Matching: The application checks if the URL matches any of the supported domains.
+## 📄 License
 
-Puppeteer Crawling: If matched, Puppeteer is used to navigate to the page, perform any domain-specific handling (like scrolling), and extract product links.
+MIT License
 
-Fallback to Cheerio: If Puppeteer fails to extract links, Cheerio is used to parse the static HTML and extract links.
+---
 
-Return Results: The extracted product links are returned.​
+## 👨‍💻 Author
 
-📄 License
-This project is licensed under the MIT License. See the LICENSE file for details.​
-Medium
-
-🤝 Contributing
-Contributions are welcome! Please fork the repository and submit a pull request.​
-Medium
+[Sumit Gupta](https://github.com/SumitGupta016)
